@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Leaderboard Dashboard</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+  <h1>Leaderboard Dashboard</h1>
+
+  <form id="updateForm" action="">
+    <label for="playerName">Player Name:</label>
+    <input type="text" id="playerName" name="playerName" required><br>
+
+    <label for="score">Score:</label>
+    <input type="number" id="score" name="score" required><br>
+
+    <input type="submit" value="Update Leaderboard">
+  </form>
+
+  <script>
+    $(document).ready(function () {
+      $("#updateForm").submit(function (event) {
+        event.preventDefault();
+
+        var playerName = $("#playerName").val();
+        var score = $("#score").val();
+
+        var newData = {
+          "playerName": playerName,
+          "score": score
+        };
+
+        $.ajax({
+          url: "leaderboard.json",
+          type: "POST",
+          data: JSON.stringify(newData),
+          dataType: "json",
+          success: function () {
+            alert("Leaderboard Updated Successfully!");
+            $("#updateForm")[0].reset();
+          },
+          error: function () {
+            alert("Error Occurred. Please try again later.");
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
