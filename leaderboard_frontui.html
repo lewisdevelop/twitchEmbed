@@ -1,93 +1,57 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Leaderboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Encode+Sans:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    body {
-      font-family: 'Encode Sans', sans-serif;
-      background-color: #fff;
-      color: #333;
-      margin: 0;
-      padding: 20px;
-    }
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
 
-    h1 {
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-    }
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9awWspbPmGnONcqwn1PY65-2zcaQSWrk",
+      authDomain: "elrinternaltimings.firebaseapp.com",
+      projectId: "elrinternaltimings",
+      storageBucket: "elrinternaltimings.appspot.com",
+      messagingSenderId: "464905951282",
+      appId: "1:464905951282:web:ad4f719b8023170319c42b",
+      measurementId: "G-T853QWLQM9"
+    };
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f1f1f1;
-      color: #333;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    .position {
-      font-weight: 700;
-      color: #d52b1e;
-    }
-  </style>
-  <script>
-    function refreshLeaderboard() {
-      $.getJSON("leaderboard.json", function (data) {
-        var leaderboardTable = document.getElementById('leaderboardTable');
-        leaderboardTable.innerHTML = '';
-        
-
-        data.forEach(function (player, index) {
-          var row = leaderboardTable.insertRow(index);
-
-          var positionCell = row.insertCell(0);
-          positionCell.innerHTML = player.position;
-          positionCell.className = 'position';
-
-          var nameCell = row.insertCell(1);
-          nameCell.innerHTML = player.name;
-
-          var scoreCell = row.insertCell(2);
-          scoreCell.innerHTML = player.score;
-        });
-      });
-    }
-
-    $(document).ready(function () {
-      setInterval(refreshLeaderboard, 1000); // Refresh leaderboard every second
-    });
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
   </script>
 </head>
-
 <body>
-  <h1>Leaderboard</h1>
 
-  <table id="leaderboardTable">
-    <tr>
-      <th>Position</th>
-      <th>Name</th>
-      <th>Score</th>
-    </tr>
-  </table>
+<div id="leaderboard"></div>
+
+<script>
+  // Reference to your database path for leaderboard data
+  const leaderboardRef = database.ref('leaderboard');
+
+  // Function to display the leaderboard
+  function displayLeaderboard(data) {
+    const leaderboardElement = document.getElementById('leaderboard');
+    leaderboardElement.innerHTML = ''; // Clear existing leaderboard
+    Object.keys(data).forEach((key, index) => {
+      const entry = data[key];
+      leaderboardElement.innerHTML += `<div>${index + 1}. ${entry.name}: ${entry.score}</div>`;
+    });
+  }
+
+  // Listen for real-time updates
+  leaderboardRef.orderByChild('score').on('value', (snapshot) => {
+    if (snapshot.exists()) {
+      displayLeaderboard(snapshot.val());
+    } else {
+      document.getElementById('leaderboard').innerHTML = '<p>No leaderboard data available.</p>';
+    }
+  });
+</script>
+
 </body>
-
 </html>

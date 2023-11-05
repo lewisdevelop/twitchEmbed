@@ -1,53 +1,56 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <title>Leaderboard Dashboard</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-</head>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.5.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
 
-<body>
-  <h1>Leaderboard Dashboard</h1>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9awWspbPmGnONcqwn1PY65-2zcaQSWrk",
+      authDomain: "elrinternaltimings.firebaseapp.com",
+      projectId: "elrinternaltimings",
+      storageBucket: "elrinternaltimings.appspot.com",
+      messagingSenderId: "464905951282",
+      appId: "1:464905951282:web:ad4f719b8023170319c42b",
+      measurementId: "G-T853QWLQM9"
+    };
 
-  <form id="updateForm" action="">
-    <label for="playerName">Player Name:</label>
-    <input type="text" id="playerName" name="playerName" required><br>
-
-    <label for="score">Score:</label>
-    <input type="number" id="score" name="score" required><br>
-
-    <input type="submit" value="Update Leaderboard">
-  </form>
-
-  <script>
-    $(document).ready(function () {
-      $("#updateForm").submit(function (event) {
-        event.preventDefault();
-
-        var playerName = $("#playerName").val();
-        var score = $("#score").val();
-
-        var newData = {
-          "playerName": playerName,
-          "score": score
-        };
-
-        $.ajax({
-          url: "leaderboard.json",
-          type: "POST",
-          data: JSON.stringify(newData),
-          dataType: "json",
-          success: function () {
-            alert("Leaderboard Updated Successfully!");
-            $("#updateForm")[0].reset();
-          },
-          error: function () {
-            alert("Error Occurred. Please try again later.");
-          }
-        });
-      });
-    });
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
   </script>
-</body>
+</head>
+<body>
 
+Name: <input type="text" id="name"><br>
+Score: <input type="number" id="score"><br>
+<button onclick="submitScore()">Submit</button>
+
+<script>
+  function submitScore() {
+    const name = document.getElementById('name').value.trim();
+    const score = parseInt(document.getElementById('score').value, 10);
+
+    if (name && !isNaN(score)) {
+      // Push the new score to the Firebase database
+      database.ref('leaderboard').push({
+        name: name,
+        score: score
+      }).then(() => {
+        alert('Score submitted successfully.');
+      }).catch((error) => {
+        console.error('Error submitting score:', error);
+      });
+    } else {
+      alert('Please enter a valid name and score.');
+    }
+  }
+</script>
+
+</body>
 </html>
